@@ -29,8 +29,8 @@ def findcity (budget, choice, time, pref, secpref):
     #temp_cities['Mode'] = temp_cities['Mode'].str.strip().str.lower()
 
     # Assuming `pref` is the ranking string entered by the user (e.g., 'BMT')
-    if pref[0] == "B":  # First priority is Budget
-        if pref[1] == "M":  # Second priority is Mode
+    if pref == "Budget":  # First priority is Budget
+        if secpref == "Mode":  # Second priority is Mode
             # Budget > Mode > Time
             temp_cities = temp_cities.query('Medprice <= @budget')
             minTime = temp_cities['Avg_Commute_Time'].min()
@@ -43,8 +43,7 @@ def findcity (budget, choice, time, pref, secpref):
                 temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
                 temp_cities = temp_cities.sort_values('Share', ascending=False)
                 print("The following cities may meet your other criteria!")
-
-        elif pref[1] == "T":  # Second priority is Commute Time
+        elif secpref == "Commute Time":  # Second priority is Commute Time
             # Budget > Time > Mode
             temp_cities = temp_cities.query('Medprice <= @budget')
             temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
@@ -52,8 +51,8 @@ def findcity (budget, choice, time, pref, secpref):
             temp_cities = temp_cities.sort_values('Share', ascending=False)
             print("The following cities may meet your other criteria!")
 
-    elif pref[0] == "M":  # First priority is Mode
-        if pref[1] == "B":  # Second priority is Budget
+    elif pref == "Mode":  # First priority is Mode
+        if pref[1] == "Budget":  # Second priority is Budget
             # Mode > Budget > Time
             temp_cities = temp_cities.query('Mode == @choice')
             temp_cities = temp_cities.query('Medprice <= @budget')
@@ -67,7 +66,7 @@ def findcity (budget, choice, time, pref, secpref):
                 temp_cities = temp_cities.sort_values('Share', ascending=False)
                 print("The following cities may meet your other criteria!")
 
-        elif pref[1] == "T":  # Second priority is Commute Time
+        elif pref[1] == "Commute Time":  # Second priority is Commute Time
             # Mode > Time > Budget
             temp_cities = temp_cities.query('Mode == @choice')
             temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
@@ -75,8 +74,8 @@ def findcity (budget, choice, time, pref, secpref):
             temp_cities = temp_cities.sort_values('Share', ascending=False)
             print("The following cities may meet your other criteria!")
 
-    elif pref[0] == "T":  # First priority is Commute Time
-        if pref[1] == "B":  # Second priority is Budget
+    elif pref[0] == "Commute Time":  # First priority is Commute Time
+        if pref[1] == "Budget":  # Second priority is Budget
             # Time > Budget > Mode
             temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
             temp_cities = temp_cities.query('Medprice <= @budget')
@@ -84,7 +83,7 @@ def findcity (budget, choice, time, pref, secpref):
             temp_cities = temp_cities.sort_values('Share', ascending=False)
             print("The following cities may meet your other criteria!")
 
-        elif pref[1] == "M":  # Second priority is Mode
+        elif pref[1] == "Mode":  # Second priority is Mode
             # Time > Mode > Budget
             temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
             temp_cities = temp_cities.query('Mode == @choice')
