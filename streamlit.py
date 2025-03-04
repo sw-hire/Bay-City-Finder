@@ -32,6 +32,7 @@ pref1 = st.selectbox("First Ranking:",
                     ("", "Budget", "Mode", "Commute Time"))
 pref2 = st.selectbox("Second Ranking:",
                     ("", "Budget", "Mode", "Commute Time"))
+
 if pref1 == "" or pref2 == "":
     meetsCondition = False
     st.error("Please select a Budget, Mode, or Commute Time.")
