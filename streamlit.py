@@ -39,7 +39,6 @@ if pref1 == "" or pref2 == "":
 
 if pref1 == pref2:
     meetsCondition = False
-    st.error("Please select a different second ranking from your first choice.")
 
 if st.button("Find My Cities") and meetsCondition:
     result = findcity(budget, mode, time, pref1, pref2)
