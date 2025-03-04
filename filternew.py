@@ -43,6 +43,7 @@ def findcity (budget, choice, time, pref, secpref):
                 temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
                 temp_cities = temp_cities.sort_values('Share', ascending=False)
                 print("The following cities may meet your other criteria!")
+        ## PLEASE FIX COMMUTE TIME
         elif secpref == "Commute Time":  # Second priority is Commute Time
             # Budget > Time > Mode
             temp_cities = temp_cities.query('Medprice <= @budget')
@@ -52,7 +53,7 @@ def findcity (budget, choice, time, pref, secpref):
             print("The following cities may meet your other criteria!")
 
     elif pref == "Mode":  # First priority is Mode
-        if pref[1] == "Budget":  # Second priority is Budget
+        if secpref == "Budget":  # Second priority is Budget
             # Mode > Budget > Time
             temp_cities = temp_cities.query('Mode == @choice')
             temp_cities = temp_cities.query('Medprice <= @budget')
@@ -66,24 +67,52 @@ def findcity (budget, choice, time, pref, secpref):
                 temp_cities = temp_cities.sort_values('Share', ascending=False)
                 print("The following cities may meet your other criteria!")
 
-        elif pref[1] == "Commute Time":  # Second priority is Commute Time
+        elif secpref == "Commute Time":  # Second priority is Commute Time
             # Mode > Time > Budget
             temp_cities = temp_cities.query('Mode == @choice')
             temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
-            temp_cities = temp_cities.query('Medprice <= @budget')
-            temp_cities = temp_cities.sort_values('Share', ascending=False)
-            print("The following cities may meet your other criteria!")
 
-    elif pref[0] == "Commute Time":  # First priority is Commute Time
-        if pref[1] == "Budget":  # Second priority is Budget
+            minBudget = temp_cities['Medprice'].min()
+            if budget < minBudget:
+                temp_cities = temp_cities.sort_values(['Share', 'Medprice'], ascending= [False, True])
+                print(
+                    "Unfortunately, we were not able to find a city according to your rankings with a price in your ideal range.\nHowever, the following cities may meet your other criteria!")
+            else:
+                temp_cities = temp_cities.query('Medprice <= @budget')
+                temp_cities = temp_cities.sort_values('Share', ascending=False)
+                print("The following cities may meet your criteria!")
+
+    elif pref == "Commute Time":  # First priority is Commute Time
+        if secpref == "Budget":  # Second priority is Budget
             # Time > Budget > Mode
             temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
             temp_cities = temp_cities.query('Medprice <= @budget')
-            temp_cities = temp_cities.query('Mode == @choice')
-            temp_cities = temp_cities.sort_values('Share', ascending=False)
-            print("The following cities may meet your other criteria!")
 
-        elif pref[1] == "Mode":  # Second priority is Mode
+            #minBudget = temp_cities['Medprice'].min()
+            if temp_cities.query('Medprice <= @budget') == temp_cities.empty:
+                if temp_cities.query('Mode == @choice') == temp_cities.empty:
+                    temp_cities = temp_cities.sort_values('Share', ascending=False)
+                    print(
+                        "Unfortunately, we were not able to find a city according to your rankings with a mode you listed.")
+
+                else:
+                    temp_cities = temp_cities.query('Mode == @choice')
+                    temp_cities = temp_cities.sort_values('Share', ascending=False)
+                    print("The following cities may meet your criteria!")
+                print(
+                    "Unfortunately, we were not able to find a city according to your rankings with a price in your ideal range.\nHowever, the following cities may meet your other criteria!")
+            else:
+                temp_cities = temp_cities.query('Medprice <= @budget')
+                if temp_cities.query('Mode == @choice') == temp_cities.empty:
+                    temp_cities = temp_cities.sort_values('Share', ascending=False)
+                    print(
+                        "Unfortunately, we were not able to find a city according to your rankings with a mode you listed.\nHowever, the following cities may meet your other criteria!")
+
+                else:
+                    temp_cities = temp_cities.query('Mode == @choice')
+                    temp_cities = temp_cities.sort_values('Share', ascending=False)
+                    print("The following cities may meet your criteria!")
+        elif secpref == "Mode":  # Second priority is Mode
             # Time > Mode > Budget
             temp_cities = temp_cities.query('Avg_Commute_Time <= @time')
             temp_cities = temp_cities.query('Mode == @choice')
@@ -96,8 +125,8 @@ def findcity (budget, choice, time, pref, secpref):
                 temp_cities = temp_cities.query('Medprice <= @budget')
                 temp_cities = temp_cities.sort_values('Share', ascending=False)
                 print("The following cities may meet your other criteria!")
-    else:
-        print("Invalid ranking! Please enter a valid ranking (e.g., 'BMT', 'BTM', etc.).")
 
-    headers = ["City", "Median Home Price", "Mode of Transportation", "Percent of Pop. Using Mode", "Avg. Commute Time"]
-    print(tabulate(temp_cities, headers = headers, tablefmt="grid"))
+    headers = ["City", "Median Home Price", "Transportation Mode", "% of Pop. Using Mode", "Avg. Commute Time"]
+    #tabulate(temp_cities, headers = headers, tablefmt="grid")
+    temp_cities.columns = headers
+    return temp_cities

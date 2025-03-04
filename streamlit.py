@@ -1,3 +1,5 @@
+from os import access
+
 import streamlit as st
 from filternew import findcity
 
@@ -30,4 +32,4 @@ if pref1 == pref2:
     st.text("Sorry! Please select a different second ranking from your first choice.")
 
 if st.button("Find My Cities"):
-    findcity(budget, mode, time, pref1, pref2)
+    st.dataframe(findcity(budget, mode, time, pref1, pref2), use_container_width=True)
