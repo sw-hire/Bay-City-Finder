@@ -29,9 +29,13 @@ if time < 17.34 and time > 0:
     st.error("Sorry! Average commute times as of 2018 start at 17.34 minutes. Please enter a value at or above 17.34.")
 st.text("In order of importance, please rank your top 2 among your budget, mode of commute, and ideal commute time.")
 pref1 = st.selectbox("First Ranking:",
-                    ("Budget", "Mode", "Commute Time"))
+                    ("", "Budget", "Mode", "Commute Time"))
 pref2 = st.selectbox("Second Ranking:",
-                    ("Budget", "Mode", "Commute Time"))
+                    ("", "Budget", "Mode", "Commute Time"))
+if pref1 == "" or pref2 == "":
+    meetsCondition = False
+    st.error("Please select a Budget, Mode, or Commute Time.")
+
 if pref1 == pref2:
     meetsCondition = False
     st.error("Please select a different second ranking from your first choice.")
